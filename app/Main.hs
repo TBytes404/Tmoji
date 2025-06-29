@@ -1,8 +1,6 @@
 module Main where
 import Data.List.Split (splitOn)
-
-docs :: String
-docs = "Write `:hi`, `:wink` or `:?`, `:!` and see it tmojilate into emojis :wink"
+import System.IO (hFlush, stdout)
 
 tmoji :: String -> String
 tmoji text = parse $ splitOn " " text
@@ -14,28 +12,32 @@ parse wds = case wds of
 
 eval :: String -> String
 eval wrd = case wrd of
-  ':':cs -> colon cs
+  ':':wd -> trans wd
+  '@':wd -> wd ++ trans wd
   _ -> wrd
 
-colon :: String -> String
-colon wrd = case wrd of
+trans :: String -> String
+trans wd = case wd of
   "hi" -> "🙋🏻"
   "wink" -> "😉"
   "?" -> "❓"
   "!" -> "❗"
-  _ -> wrd
+  _ -> wd
 
 cli :: IO ()
 cli = do
+  putStr "> "
+  hFlush stdout
   line <- getLine
   if line == ":q"
-    then putStrLn $ tmoji "Goodbye :hi"
+    then putStrLn $ tmoji "\nGoodbye :hi"
     else do
+      putStr "▶️ "
       putStrLn $ tmoji line
       cli
-  
 
 main :: IO ()
 main = do
-  putStrLn $ tmoji docs
+  usage <- readFile "USAGE.md"
+  putStrLn usage
   cli
