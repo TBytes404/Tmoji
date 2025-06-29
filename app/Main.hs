@@ -2,10 +2,10 @@ module Main where
 import Data.List.Split (splitOn)
 
 docs :: String
-docs = "Write `:hi`, `:wink` or `:?`, `:!` and see it translate into emojis :wink :!"
+docs = "Write `:hi`, `:wink` or `:?`, `:!` and see it tmojilate into emojis :wink"
 
-trans :: String -> String
-trans text = parse $ splitOn " " text
+tmoji :: String -> String
+tmoji text = parse $ splitOn " " text
 
 parse :: [String] -> String
 parse wds = case wds of
@@ -14,11 +14,11 @@ parse wds = case wds of
 
 eval :: String -> String
 eval wrd = case wrd of
-  ':':cs -> tmoji cs
+  ':':cs -> colon cs
   _ -> wrd
 
-tmoji :: String -> String
-tmoji wrd = case wrd of
+colon :: String -> String
+colon wrd = case wrd of
   "hi" -> "🙋🏻"
   "wink" -> "😉"
   "?" -> "❓"
@@ -28,14 +28,14 @@ tmoji wrd = case wrd of
 cli :: IO ()
 cli = do
   line <- getLine
-  if line == "exit" || line == "quit"
-    then putStrLn $ trans "Goodbye :hi :!"
+  if line == ":q"
+    then putStrLn $ tmoji "Goodbye :hi"
     else do
-      putStrLn $ trans line
+      putStrLn $ tmoji line
       cli
   
 
 main :: IO ()
 main = do
-  putStrLn $ trans docs
+  putStrLn $ tmoji docs
   cli
