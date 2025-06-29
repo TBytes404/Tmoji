@@ -4,24 +4,22 @@ tmoji :: String -> String
 tmoji text = unlines $ map (parse . words) (lines text)
 
 parse :: [String] -> String
-parse wds = case wds of
-  w:ws -> unwords [eval w, parse ws]
+parse tags = case tags of
+  t:ts -> unwords [eval t, parse ts]
   [] -> ""
 
 eval :: String -> String
-eval wrd = case wrd of
-  '@':wd -> wd ++ trans wd
-  ':':wd -> let w = trans wd in
-    if w == "" then wd else w
-  _ -> wrd
+eval tag = case tag of
+  '@':word -> word ++ trans word
+  ':':word -> let emoji = trans word in
+    if emoji == "" then word else emoji
+  _ -> tag
+
+tmojiMap :: [(String, String)]
+tmojiMap = [("hi", "🙋🏻"), ("wink", "😉"), ("?", "❓"), ("!", "❗")]
 
 trans :: String -> String
-trans wd = case wd of
-  "hi" -> "🙋🏻"
-  "wink" -> "😉"
-  "?" -> "❓"
-  "!" -> "❗"
-  _ -> ""
+trans word = maybe "" id (lookup word tmojiMap)
 
 main :: IO ()
 main = getContents >>= putStr . tmoji
