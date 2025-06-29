@@ -1,13 +1,11 @@
 module Main where
-
 import Data.List.Split (splitOn)
--- (splitOn " " text) 
 
-text :: String
-text = ":Hi there buddy, how are you :?"
+docs :: String
+docs = "Write `:hi`, `:wink` or `:?`, `:!` and see it translate into emojis :wink :!"
 
-expect :: String
-expect = "🙋🏻 there buddy, how are you ❓"
+trans :: String -> String
+trans text = parse $ splitOn " " text
 
 parse :: [String] -> String
 parse wds = case wds of
@@ -16,9 +14,28 @@ parse wds = case wds of
 
 eval :: String -> String
 eval wrd = case wrd of
-  ':':"Hi" -> "🙋🏻"
-  ':':"?" -> "❓"
+  c:cs | c == ':' -> tmoji cs
   _ -> wrd
 
+tmoji :: String -> String
+tmoji wrd = case wrd of
+  "hi" -> "🙋🏻"
+  "wink" -> "😉"
+  "?" -> "❓"
+  "!" -> "❗"
+  _ -> wrd
+
+cli :: IO ()
+cli = do
+  line <- getLine
+  if line == "exit" || line == "quit"
+    then putStrLn $ trans "Goodbye :hi :!"
+    else do
+      putStrLn $ trans line
+      cli
+  
+
 main :: IO ()
-main = putStr $ parse $ (splitOn " " text) 
+main = do
+  putStrLn $ trans docs
+  cli
