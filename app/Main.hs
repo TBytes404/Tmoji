@@ -1,13 +1,11 @@
 module Main where
-import Data.List.Split (splitOn)
-import System.IO (hFlush, stdout)
 
 tmoji :: String -> String
-tmoji text = parse $ splitOn " " text
+tmoji text = unlines $ map (parse . words) (lines text)
 
 parse :: [String] -> String
 parse wds = case wds of
-  w:ws -> eval(w) ++" "++ parse ws
+  w:ws -> unwords [eval w, parse ws]
   [] -> ""
 
 eval :: String -> String
@@ -25,20 +23,5 @@ trans wd = case wd of
   "!" -> "❗"
   _ -> ""
 
-cli :: IO ()
-cli = do
-  putStr "> "
-  hFlush stdout
-  line <- getLine
-  if line == ":q"
-    then putStrLn $ tmoji "\nGoodbye :hi"
-    else do
-      putStr "▶️ "
-      putStrLn $ tmoji line
-      cli
-
 main :: IO ()
-main = do
-  usage <- readFile "USAGE.txt"
-  putStrLn usage
-  cli
+main = getContents >>= putStr . tmoji

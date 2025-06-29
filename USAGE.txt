@@ -1,4 +1,4 @@
-______ ___ ___  ___   ____ ____
+ ______ ___ ___  ___   ____ ____
 |      |   T   T/   \ |    l    j
 |      | _   _ Y     Yl__  ||  T
 l_j  l_|  \_/  |  O  |__j  ||  |
@@ -8,9 +8,13 @@ l_j  l_|  \_/  |  O  |__j  ||  |
 
 Translate annotated text into emoji 😄
 
+Usage:
+  tmoji (Type `Ctrl+D` to Quit)
+  tmoji < EXAMPLE.txt > OUTPUT.txt
+
 Syntax:
-  @tag → Places the corresponding emoji _after_ the preceding word.
-  :tag → Replaces the tag _itself_ with the corresponding emoji.
+  @tag → Places the corresponding emoji after the preceding word.
+  :tag → Replaces the tag itself with the corresponding emoji.
 
 Rules:
   • @ tags attach the emoji after the word (e.g. "@hi" → "hi🙋🏻").
@@ -22,5 +26,3 @@ Example:
   Output: hi🙋🏻 there ❗️ 😉 . no record
 
 Easily customize emoji mappings in the source code.
-
-Type `:q` to quit.
