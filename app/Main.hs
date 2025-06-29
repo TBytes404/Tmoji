@@ -14,7 +14,7 @@ parse wds = case wds of
 
 eval :: String -> String
 eval wrd = case wrd of
-  c:cs | c == ':' -> tmoji cs
+  ':':cs -> tmoji cs
   _ -> wrd
 
 tmoji :: String -> String
