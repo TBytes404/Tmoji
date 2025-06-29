@@ -12,8 +12,9 @@ parse wds = case wds of
 
 eval :: String -> String
 eval wrd = case wrd of
-  ':':wd -> trans wd
   '@':wd -> wd ++ trans wd
+  ':':wd -> let w = trans wd in
+    if w == "" then wd else w
   _ -> wrd
 
 trans :: String -> String
@@ -22,7 +23,7 @@ trans wd = case wd of
   "wink" -> "😉"
   "?" -> "❓"
   "!" -> "❗"
-  _ -> wd
+  _ -> ""
 
 cli :: IO ()
 cli = do
@@ -38,6 +39,6 @@ cli = do
 
 main :: IO ()
 main = do
-  usage <- readFile "USAGE.md"
+  usage <- readFile "USAGE.txt"
   putStrLn usage
   cli
