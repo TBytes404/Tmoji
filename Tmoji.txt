@@ -19,5 +19,5 @@
  clap           👏
  ok             👍
  no             👎
- think		      🤔
- sleep		      😴
+ think          🤔
+ sleep          😴
