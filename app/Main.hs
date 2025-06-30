@@ -1,35 +1,35 @@
 module Main where
-import Data.Maybe (fromMaybe, catMaybes)
+
+import Data.Maybe (mapMaybe)
 import Data.Char (toLower)
 import System.IO (hPutStrLn, stderr)
-import qualified Data.Map as Map
+import Data.Map (Map, fromList, findWithDefault)
 
-type EmojiMap = Map.Map String String
-
-tmoji :: EmojiMap -> String -> String
-tmoji emojiMap text = unlines . map (unwords . map eval . words) . lines $ text
-  where
-  eval :: String -> String
-  eval tag = case tag of
-    ':':word -> emojiFor word
-    '@':word -> let emoji = emojiFor word in
-      word ++ if emoji == word then "" else emoji
-    _ -> tag
-
-  emojiFor :: String -> String
-  emojiFor word = fromMaybe word $ Map.lookup (map toLower word) emojiMap
-
-mapTmoji :: String -> EmojiMap
-mapTmoji text = Map.fromList . catMaybes $ map parse $ lines text
-  where
-  parse :: String -> Maybe (String, String)
-  parse line = case words line of
-    (tag:emoji:_) -> Just(tag, emoji)
-    _ -> Nothing
+type Tag = String
+type Emoji = String
+type EmojiMap = Map Tag Emoji
 
 main :: IO ()
 main = do
-  readFile "USAGE.txt" >>= hPutStrLn stderr
+  hPutStrLn stderr =<< readFile "USAGE.txt"
   emojiMap <- mapTmoji <$> readFile "Tmoji.txt"
   getContents >>= putStr . tmoji emojiMap
 
+tmoji :: EmojiMap -> String -> Emoji
+tmoji emojiMap = unlines . map (unwords . map eval . words) . lines
+  where
+  eval :: String -> Emoji
+  eval (':':word) = emojiFor word
+  eval ('@':word) = word ++ emojiFor word
+  eval t = t
+
+  emojiFor :: Tag -> Emoji
+  emojiFor word = findWithDefault "" (map toLower word) emojiMap
+
+mapTmoji :: String -> EmojiMap
+mapTmoji = fromList . mapMaybe parse . lines
+  where
+  parse :: String -> Maybe (Tag, Emoji)
+  parse line = case words line of
+    (tag:emoji:_) -> Just(tag, emoji)
+    _ -> Nothing
