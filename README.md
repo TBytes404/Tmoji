@@ -15,6 +15,5 @@ Set-ExecutionPolicy Bypass -Scope Process -Force;[System.Net.ServicePointManager
 ```ps1
 git clone https://github.com/TBytes404/Tmoji.git
 cd Tmoji
-cabal install
 cabal run
 ```

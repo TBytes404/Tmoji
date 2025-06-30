@@ -10,7 +10,7 @@ Translate annotated text into emoji 😄
 
 Usage:
   tmoji (Type `Ctrl+D` to Quit)
-  tmoji < EXAMPLE.txt > OUTPUT.txt
+  tmoji < INPUT.txt > OUTPUT.txt
 
 Syntax:
   @tag → Places the corresponding emoji after the preceding word.
@@ -22,7 +22,7 @@ Rules:
   • If a tag has no emoji mapping, the symbol (@ or :) is stripped and the word is preserved.
 
 Example:
-  Input: @hi there :! :wink . @no :record
-  Output: hi🙋🏻 there ❗️ 😉 . no record
+  Input: @hi there :! :wink . @wrong :tag
+  Output: hi🙋🏻 there ❗️ 😉 . wrong tag
 
-Easily customize emoji mappings in the source code.
+Easily customize emoji mappings in the `Tmoji.txt` file.
