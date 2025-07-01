@@ -21,6 +21,8 @@ tmoji emojiMap = unlines . map (unwords . map eval . words) . lines
   eval :: String -> Emoji
   eval (':':word) = emojiFor word word
   eval ('@':word) = word ++ emojiFor "" word
+  eval ('$':word) = emoji ++ word ++ emoji
+    where emoji = emojiFor "" word
   eval t = t
 
   emojiFor :: String -> Tag -> Emoji

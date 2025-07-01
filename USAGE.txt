@@ -13,10 +13,10 @@ Usage:
   tmoji < INPUT.txt > OUTPUT.txt
 
 Rules:
-  • @tag -> attach the emoji after the word (e.g. "@hi" → "hi🙋🏻").
   • :tag -> replace the tag entirely (e.g. ":wink" → "😉").
-  • If a tag has no emoji mapping, the symbol (@ or :) is stripped and the word is preserved.
-  • Use the symbol twice to escape it (e.g. "@@wink" → "@wink", "::" -> ":").
+  • @tag -> attach the emoji after the word (e.g. "@hi" → "hi🙋🏻").
+  • $tag -> surround the word with emoji (e.g. "$fire" → "🔥fire🔥").
+  • Use the symbol twice to escape it (e.g. "::" -> ":", "$$fire" → "$fire").
 
 Example:
   Input: @hi there :! :wink . @wrong :tag @@escaped.com
