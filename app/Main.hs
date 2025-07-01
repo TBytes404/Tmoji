@@ -1,7 +1,7 @@
 module Main where
 
-import Data.Maybe (mapMaybe)
 import Data.Char (toLower)
+import Data.Maybe (mapMaybe)
 import System.IO (hPutStrLn, stderr)
 import Data.Map (Map, fromList, findWithDefault)
 
@@ -19,12 +19,12 @@ tmoji :: EmojiMap -> String -> Emoji
 tmoji emojiMap = unlines . map (unwords . map eval . words) . lines
   where
   eval :: String -> Emoji
-  eval (':':word) = emojiFor word
-  eval ('@':word) = word ++ emojiFor word
+  eval (':':word) = emojiFor word word
+  eval ('@':word) = word ++ emojiFor "" word
   eval t = t
 
-  emojiFor :: Tag -> Emoji
-  emojiFor word = findWithDefault "" (map toLower word) emojiMap
+  emojiFor :: String -> Tag -> Emoji
+  emojiFor fallback word = findWithDefault fallback (map toLower word) emojiMap
 
 mapTmoji :: String -> EmojiMap
 mapTmoji = fromList . mapMaybe parse . lines

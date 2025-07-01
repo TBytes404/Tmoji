@@ -1,6 +1,6 @@
 # Tmoji — convert text to emoji
 
-![Demo](assets/demo.png)
+![Demo](assets/images/demo.png)
 
 ## Install Haskell and Toolchains
 
