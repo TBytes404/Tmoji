@@ -9,8 +9,13 @@ l_j  l_|  \_/  |  O  |__j  ||  |
 Translate annotated text into emoji 😄
 
 Usage:
-  tmoji (Type `Ctrl+D` to Quit)
-  tmoji < INPUT.txt > OUTPUT.txt
+  tmoji [emoji-config.txt] (Type `Ctrl+D` to Quit)
+  tmoji [emoji-config.txt] < input.txt > output.txt
+
+Customize: [emoji-config.txt]
+  • Optional file containing custom emoji mappings:  tag  emoji (eg. hello  👋).
+  • If included, overwrites built-in default emojis.
+  • Each tag-emoji pair is separated by newline and tags must be lowercase.
 
 Rules:
   • :tag -> replace the tag entirely (e.g. ":wink" → "😉").
@@ -19,7 +24,5 @@ Rules:
   • Use the symbol twice to escape it (e.g. "::" -> ":", "$$fire" → "$fire").
 
 Example:
-  Input: @hi there :! :wink . @wrong :tag @@escaped.com
-  Output: hi🙋🏻 there ❗️ 😉 . wrong tag @escaped.com
-
-Easily customize emoji mappings in the `Tmoji.txt` file.
+  Input: @hi there :! $star . :tag @@escaped.com
+  Output: hi🙋🏻 there ❗️ ⭐️star⭐️ . tag @escaped.com

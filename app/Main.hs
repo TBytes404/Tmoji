@@ -1,19 +1,29 @@
+{-# LANGUAGE TemplateHaskell #-}
 module Main where
 
 import Data.Char (toLower)
 import Data.Maybe (mapMaybe)
+import System.Environment (getArgs)
 import System.IO (hPutStrLn, stderr)
+import Data.FileEmbed (embedStringFile)
 import Data.Map (Map, fromList, findWithDefault)
 
-type Tag = String
-type Emoji = String
+type Tag      = String
+type Emoji    = String
 type EmojiMap = Map Tag Emoji
 
 main :: IO ()
 main = do
-  hPutStrLn stderr =<< readFile "USAGE.txt"
-  emojiMap <- mapTmoji <$> readFile "Tmoji.txt"
-  getContents >>= putStr . tmoji emojiMap
+  hPutStrLn stderr usageText
+  args     <- getArgs
+  emojiMap <- case args of
+    cfg:_  -> mapTmoji . (emojiCfg ++) <$> readFile cfg
+    []     -> pure $ mapTmoji emojiCfg
+  getContents >>= putStr . tmoji emojiMap 
+  where
+  usageText, emojiCfg :: String
+  usageText = $(embedStringFile "USAGE.txt")
+  emojiCfg  = $(embedStringFile "Tmoji.txt")
 
 tmoji :: EmojiMap -> String -> Emoji
 tmoji emojiMap = unlines . map (unwords . map eval . words) . lines
@@ -22,7 +32,7 @@ tmoji emojiMap = unlines . map (unwords . map eval . words) . lines
   eval (':':word) = emojiFor word word
   eval ('@':word) = word ++ emojiFor "" word
   eval ('$':word) = emoji ++ word ++ emoji
-    where emoji = emojiFor "" word
+      where emoji = emojiFor "" word
   eval t = t
 
   emojiFor :: String -> Tag -> Emoji
@@ -33,5 +43,6 @@ mapTmoji = fromList . mapMaybe parse . lines
   where
   parse :: String -> Maybe (Tag, Emoji)
   parse line = case words line of
-    (tag:emoji:_) -> Just(tag, emoji)
-    _ -> Nothing
+    tag:emoji:_ -> Just (tag, emoji)
+    _           -> Nothing
+
