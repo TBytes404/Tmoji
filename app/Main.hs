@@ -1,8 +1,8 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Main where
 
-import Data.Char (toLower)
 import Data.Maybe (mapMaybe)
+import Data.Char (toLower, isSpace)
 import System.Environment (getArgs)
 import System.IO (hPutStrLn, stderr)
 import Data.FileEmbed (embedStringFile)
@@ -26,12 +26,13 @@ main = do
   emojiCfg  = $(embedStringFile "Tmoji.txt")
 
 tmoji :: EmojiMap -> String -> Emoji
-tmoji emojiMap = unlines . map (unwords . map eval . words) . lines
+tmoji emojiMap = unlines . map (concatMap eval . split) . lines
   where
   eval :: String -> Emoji
   eval (':':word) = emojiFor word word
-  eval ('@':word) = word ++ emojiFor "" word
-  eval ('$':word) = emoji ++ word ++ emoji
+  eval ('<':word) = emojiFor "" word ++ word
+  eval ('>':word) = word ++ emojiFor "" word
+  eval ('@':word) = emoji ++ word ++ emoji
       where emoji = emojiFor "" word
   eval t = t
 
@@ -46,3 +47,10 @@ mapTmoji = fromList . mapMaybe parse . lines
     tag:emoji:_ -> Just (tag, emoji)
     _           -> Nothing
 
+split :: String -> [String]
+split "" = []
+split s@(c:_)
+  | isSpace c = let (spaces, rest) = span isSpace s
+                in spaces : split rest
+  | otherwise = let (word, rest) = break isSpace s
+                in word : split rest

@@ -19,10 +19,11 @@ Customize: [emoji-config.txt]
 
 Rules:
   • :tag -> replace the tag entirely (e.g. ":wink" → "😉").
-  • @tag -> attach the emoji after the word (e.g. "@hi" → "hi🙋🏻").
-  • $tag -> surround the word with emoji (e.g. "$fire" → "🔥fire🔥").
-  • Use the symbol twice to escape it (e.g. "::" -> ":", "$$fire" → "$fire").
+  • <tag -> attach the emoji before the word (e.g. "<hi" → "🙋‍♂️hi").
+  • >tag -> attach the emoji after the word (e.g. ">hi" → "hi🙋‍♂️").
+  • @tag -> surround the word with emoji (e.g. "@fire" → "🔥fire🔥").
+  • Use the symbol twice to escape it (e.g. "::" -> ":", "@@fire" → "@fire").
 
 Example:
-  Input: @hi there :! $star . :tag @@escaped.com
-  Output: hi🙋🏻 there ❗️ ⭐️star⭐️ . tag @escaped.com
+  Input: <hi there :! @star . :tag @@escaped.com
+  Output: 🙋‍♂️hi there ❗️ ⭐️star⭐️ . tag @escaped.com
