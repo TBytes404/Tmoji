@@ -16,7 +16,7 @@
  cool           😎
  party          🎉
  clap           👏
- ok             👍
+ OK             👍
  no             👎
  think          🤔
  sleep          😴

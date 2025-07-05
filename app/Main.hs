@@ -29,19 +29,24 @@ tmoji :: EmojiMap -> String -> Emoji
 tmoji emojiMap = unlines . map (concatMap eval . split) . lines
   where
   eval :: String -> Emoji
-  eval (':':word) = emojiFor word word
-  eval ('<':word) = emojiFor "" word ++ word
-  eval ('>':word) = word ++ emojiFor "" word
+  eval (':':word) = emojiFor' word word
+  eval ('<':word) = emojiFor word ++ word
+  eval ('>':word) = word ++ emojiFor word
   eval ('@':word) = emoji ++ word ++ emoji
-      where emoji = emojiFor "" word
+      where emoji = emojiFor word
   eval t = t
 
-  emojiFor :: String -> Tag -> Emoji
-  emojiFor fallback word = findWithDefault fallback (map toLower word) emojiMap
+  emojiFor :: Tag -> Emoji
+  emojiFor word = emojiFor' "" word
+  emojiFor' :: String -> Tag -> Emoji
+  emojiFor' fallback word = findWithDefault fallback (map toLower word) emojiMap
 
 mapTmoji :: String -> EmojiMap
-mapTmoji = fromList . mapMaybe parse . lines
+mapTmoji = fromList . normalize . mapMaybe parse . lines
   where
+  normalize :: [(Tag, Emoji)] -> [(Tag, Emoji)]
+  normalize = map (\(tag, emoji) -> (map toLower tag, emoji))
+
   parse :: String -> Maybe (Tag, Emoji)
   parse line = case words line of
     tag:emoji:_ -> Just (tag, emoji)

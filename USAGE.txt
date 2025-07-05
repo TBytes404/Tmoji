@@ -15,9 +15,10 @@ Usage:
 Customize: [emoji-config.txt]
   • Optional file containing custom emoji mappings:  tag  emoji (eg. hello  👋).
   • If included, overwrites built-in default emojis.
-  • Each tag-emoji pair is separated by newline and tags must be lowercase.
+  • Each tag-emoji pair is separated by newline.
 
 Rules:
+  • Tags are Case-Insensitive (e.g. ":tag" = ":tAg").
   • :tag -> replace the tag entirely (e.g. ":wink" → "😉").
   • <tag -> attach the emoji before the word (e.g. "<hi" → "🙋‍♂️hi").
   • >tag -> attach the emoji after the word (e.g. ">hi" → "hi🙋‍♂️").
