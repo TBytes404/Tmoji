@@ -26,7 +26,7 @@ main = do
   emojiCfg  = $(embedStringFile "Tmoji.txt")
 
 tmoji :: EmojiMap -> String -> Emoji
-tmoji emojiMap = unlines . map (concatMap eval . split) . lines
+tmoji emojiMap = concatMap eval . split
   where
   eval :: String -> Emoji
   eval (':':word) = emojiFor' word word
@@ -34,23 +34,25 @@ tmoji emojiMap = unlines . map (concatMap eval . split) . lines
   eval ('>':word) = word ++ emojiFor word
   eval ('@':word) = emoji ++ word ++ emoji
       where emoji = emojiFor word
+  eval ('$':word) = if null emoji then word else concat [emoji | _ <- [1..length word]]
+      where emoji = emojiFor word
   eval t = t
 
   emojiFor :: Tag -> Emoji
-  emojiFor word = emojiFor' "" word
+  emojiFor = emojiFor' ""
   emojiFor' :: String -> Tag -> Emoji
   emojiFor' fallback word = findWithDefault fallback (map toLower word) emojiMap
 
 mapTmoji :: String -> EmojiMap
 mapTmoji = fromList . normalize . mapMaybe parse . lines
   where
-  normalize :: [(Tag, Emoji)] -> [(Tag, Emoji)]
-  normalize = map (\(tag, emoji) -> (map toLower tag, emoji))
-
   parse :: String -> Maybe (Tag, Emoji)
   parse line = case words line of
     tag:emoji:_ -> Just (tag, emoji)
     _           -> Nothing
+
+  normalize :: [(Tag, Emoji)] -> [(Tag, Emoji)]
+  normalize = map (\(tag, emoji) -> (map toLower tag, emoji))
 
 split :: String -> [String]
 split "" = []
