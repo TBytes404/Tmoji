@@ -11,23 +11,21 @@ Translate annotated text into emoji 😄
 Usage:
   tmoji [emoji-config.txt] (Type `Ctrl+D` to Quit)
   tmoji [emoji-config.txt] < input.txt > output.txt
+  cat input.txt | tmoji [emoji-config.txt] | grep <pattern>
 
 Customize: [emoji-config.txt]
-  • Optional file containing custom emoji mappings:  tag  emoji (eg. hello  👋).
+  • Optional file containing custom emoji mappings:  tag  emoji (eg. Hello  👋).
   • If included, overwrites built-in default emojis.
   • Each tag-emoji pair is separated by newline.
+  • Tags are Case-Insensitive (e.g. ":tag" = ":TAG").
 
-Tags:
+Rules:
   • :tag -> replace the tag entirely (e.g. ":wink" → "😉").
   • <tag -> insert the emoji before the word (e.g. "<hi" → "🙋‍♂️hi").
   • >tag -> append the emoji after the word (e.g. ">hi" → "hi🙋‍♂️").
   • @tag -> surround the word with emojis (e.g. "@fire" → "🔥fire🔥").
   • $tag -> replace every character in the word with emojis (e.g. "$fire" → "🔥🔥🔥🔥").
-
-Rules:
-  • Tags are Case-Insensitive (e.g. ":tag" = ":TAG").
-  • Use the symbol twice to escape emojification ("@@fire" → "@fire").
-  • If a tag does not have a emoji mapping, its symbol is removed (e.g. ":tag" → "tag").
+  • If a tag does not have a emoji mapping, its symbol is removed (e.g. "@tag" → "tag").
 
 Example:
   Input: <hi there :! @star . :tag @@smile

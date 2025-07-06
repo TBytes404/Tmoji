@@ -1,12 +1,13 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Main where
 
-import Data.Maybe (mapMaybe)
 import Data.Char (toLower, isSpace)
+import Data.Maybe (mapMaybe)
+import Data.Map.Strict (Map, fromList, lookup, findWithDefault)
 import System.Environment (getArgs)
 import System.IO (hPutStrLn, stderr)
 import Data.FileEmbed (embedStringFile)
-import Data.Map (Map, fromList, findWithDefault)
+import Prelude hiding (lookup)
 
 type Tag      = String
 type Emoji    = String
@@ -14,45 +15,48 @@ type EmojiMap = Map Tag Emoji
 
 main :: IO ()
 main = do
-  hPutStrLn stderr usageText
+  hPutStrLn stderr usage
   args     <- getArgs
   emojiMap <- case args of
     cfg:_  -> mapTmoji . (emojiCfg ++) <$> readFile cfg
     []     -> pure $ mapTmoji emojiCfg
-  getContents >>= putStr . tmoji emojiMap 
-  where
-  usageText, emojiCfg :: String
-  usageText = $(embedStringFile "USAGE.txt")
-  emojiCfg  = $(embedStringFile "Tmoji.txt")
+  interact (render emojiMap)
 
-tmoji :: EmojiMap -> String -> Emoji
-tmoji emojiMap = concatMap eval . split
-  where
-  eval :: String -> Emoji
-  eval (':':word) = emojiFor' word word
-  eval ('<':word) = emojiFor word ++ word
-  eval ('>':word) = word ++ emojiFor word
-  eval ('@':word) = emoji ++ word ++ emoji
-      where emoji = emojiFor word
-  eval ('$':word) = if null emoji then word else concat [emoji | _ <- [1..length word]]
-      where emoji = emojiFor word
-  eval t = t
-
-  emojiFor :: Tag -> Emoji
-  emojiFor = emojiFor' ""
-  emojiFor' :: String -> Tag -> Emoji
-  emojiFor' fallback word = findWithDefault fallback (map toLower word) emojiMap
+usage, emojiCfg :: String
+usage    = $(embedStringFile "USAGE.txt")
+emojiCfg = $(embedStringFile "Tmoji.txt")
 
 mapTmoji :: String -> EmojiMap
 mapTmoji = fromList . normalize . mapMaybe parse . lines
   where
+  normalize :: [(Tag, Emoji)] -> [(Tag, Emoji)]
+  normalize  = map (\(tag, emoji) -> (map toLower tag, emoji))
+
   parse :: String -> Maybe (Tag, Emoji)
   parse line = case words line of
-    tag:emoji:_ -> Just (tag, emoji)
-    _           -> Nothing
+    (tag:emoji:_) -> Just (tag, emoji)
+    _             -> Nothing
 
-  normalize :: [(Tag, Emoji)] -> [(Tag, Emoji)]
-  normalize = map (\(tag, emoji) -> (map toLower tag, emoji))
+render :: EmojiMap -> String -> String
+render emap = concatMap (transform emap) . split
+
+transform :: EmojiMap -> String -> String
+transform emap word = case word of
+  (':':tag) -> emojiOr tag tag
+  ('<':tag) -> emoji tag ++ tag
+  ('>':tag) -> tag ++ emoji tag
+  ('@':tag) -> e ++ tag ++ e where e = emoji tag
+  ('$':tag) -> emojiAnd (\e -> concat [e | _ <- [1..(length tag)]]) tag
+  tag       -> tag
+  where
+  emoji :: Tag -> Emoji
+  emoji = emojiOr ""
+
+  emojiOr :: String -> Tag -> Emoji
+  emojiOr def tag = findWithDefault def (map toLower tag) emap
+
+  emojiAnd :: (Emoji -> String) -> Tag -> Emoji
+  emojiAnd fun tag = maybe tag fun (lookup (map toLower tag) emap)
 
 split :: String -> [String]
 split "" = []
