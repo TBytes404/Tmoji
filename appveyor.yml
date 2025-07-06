@@ -1,0 +1,38 @@
+version: 0.{build}-win
+
+skip_non_tags: true
+
+install:
+  - choco install -y cabal
+  - choco install -y ghc
+  - refreshenv
+  - cabal update
+  - cabal build --only-dependencies Tmoji
+
+cache:
+  - '%APPDATA%\cabal\packages' # Cabal downloaded packages
+  - '%APPDATA%\cabal\store' # Cabal global store (compiled dependencies)
+  - "dist-newstyle" # Local build directory
+
+environment:
+  OUTPUT_EXE: build-output\Tmoji.exe
+
+build_script:
+  - cabal build Tmoji
+  - mkdir build-output
+  - for /f %%i in ('cabal list-bin Tmoji') do copy "%%i" %OUTPUT_EXE%
+
+artifacts:
+  - path: build-output\Tmoji.exe
+    name: Tmoji
+
+deploy:
+  - provider: GitHub
+    release: $(APPVEYOR_REPO_TAG_NAME)
+    description: "Tmoji Release"
+    auth_token:
+      secure: "Dbrl7kn2JARGm8w8C3lN5QwmXGbNFNOXJfkhMzmLzBTR92q1sZw66v5wubZd4hN5"
+    artifact: Tmoji
+    force_update: true
+    on:
+      APPVEYOR_REPO_TAG: true
